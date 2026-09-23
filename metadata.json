@@ -1,0 +1,8 @@
+{
+  "name": "AutoValuator - Used Car Price Prediction & Valuation Desk",
+  "description": "Dealership appraisal desk powered by Random Forest ML regression trained on the CarDekho dataset, featuring multi-model benchmark comparisons, stated margins of error, and feature importance insights.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

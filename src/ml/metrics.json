@@ -1,0 +1,150 @@
+{
+  "dataset_summary": {
+    "raw_rows": 15411,
+    "raw_columns": 13,
+    "duplicates_dropped": 167,
+    "zero_seats_dropped": 2,
+    "brand_normalization": "ISUZU -> Isuzu",
+    "clean_rows": 15242,
+    "train_rows": 12193,
+    "test_rows": 3049,
+    "test_split_ratio": 0.2,
+    "random_state": 42,
+    "target_column": "selling_price",
+    "price_stats": {
+      "median": 556000,
+      "mean": 775000,
+      "min": 40000,
+      "max": 39500000
+    }
+  },
+  "models": [
+    {
+      "id": "rf",
+      "name": "Random Forest Regressor",
+      "hyperparameters": "n_estimators=100, random_state=42",
+      "scaling": "Unscaled features",
+      "r2_score": 0.8790,
+      "mae": 105480,
+      "rmse": 313403,
+      "is_best": true,
+      "notes": "Best overall performer. Superior non-linear ensemble splits robust to right-skewed prices. Powers the live appraisal engine."
+    },
+    {
+      "id": "dt",
+      "name": "Decision Tree Regressor",
+      "hyperparameters": "max_depth=10, random_state=42",
+      "scaling": "Unscaled features",
+      "r2_score": 0.8587,
+      "mae": 119489,
+      "rmse": 338604,
+      "is_best": false,
+      "notes": "Strong standalone tree with depth bounding (max_depth=10) preventing runaway leaf overfitting."
+    },
+    {
+      "id": "svr",
+      "name": "SVR (RBF, X+y scaled)",
+      "hyperparameters": "kernel='rbf', C=1.0, epsilon=0.1",
+      "scaling": "StandardScaler on BOTH X and y",
+      "r2_score": 0.6898,
+      "mae": 123463,
+      "rmse": 501736,
+      "is_best": false,
+      "notes": "Required target scaling on BOTH X and y; without y-scaling, SVR produces negative R² due to wide target range (₹40k to ₹3.95Cr)."
+    },
+    {
+      "id": "linreg",
+      "name": "Linear Regression",
+      "hyperparameters": "Standard OLS",
+      "scaling": "Unscaled features",
+      "r2_score": 0.6360,
+      "mae": 259358,
+      "rmse": 543442,
+      "is_best": false,
+      "notes": "Parametric baseline. Underperforms due to non-linear depreciation curves and power scaling."
+    },
+    {
+      "id": "ada",
+      "name": "AdaBoost Regressor",
+      "hyperparameters": "n_estimators=100, random_state=42",
+      "scaling": "Unscaled features",
+      "r2_score": 0.4589,
+      "mae": 552061,
+      "rmse": 662648,
+      "is_best": false,
+      "notes": "Underperforms significantly. AdaBoost's loss function is acutely sensitive to extreme target outliers (luxury exotics > ₹1Cr and km > 3.8M km), repeatedly over-weighting outlier residuals."
+    }
+  ],
+  "feature_importances": [
+    {
+      "feature": "max_power",
+      "label": "Engine Power (bhp)",
+      "importance": 0.635,
+      "percentage": "63.5%",
+      "insight": "Dominant predictor by a wide margin. Horsepower dictates vehicle luxury class, trim level, and original MSRP."
+    },
+    {
+      "feature": "mileage",
+      "label": "Fuel Mileage (km/l)",
+      "importance": 0.127,
+      "percentage": "12.7%",
+      "insight": "Key split differentiator: high mileage (22-33 km/l) strongly isolates entry budget hatchbacks from heavy luxury cars (8-14 km/l)."
+    },
+    {
+      "feature": "vehicle_age",
+      "label": "Vehicle Age (years)",
+      "importance": 0.127,
+      "percentage": "12.7%",
+      "insight": "Drives compounding annual depreciation decay curve (~8-12% value loss per year)."
+    },
+    {
+      "feature": "km_driven",
+      "label": "Odometer (km driven)",
+      "importance": 0.066,
+      "percentage": "6.6%",
+      "insight": "Quantifies mechanical wear & tear, warranty expiry, and pending maintenance cycles."
+    },
+    {
+      "feature": "engine",
+      "label": "Engine Displacement (cc)",
+      "importance": 0.024,
+      "percentage": "2.4%",
+      "insight": "Correlates with chassis weight and engine cylinder count."
+    },
+    {
+      "feature": "brand",
+      "label": "Make / Brand",
+      "importance": 0.012,
+      "percentage": "1.2%",
+      "insight": "Differentiates luxury prestige marques from mass-market retainers."
+    },
+    {
+      "feature": "transmission_type",
+      "label": "Transmission (Automatic/Manual)",
+      "importance": 0.003,
+      "percentage": "0.3%",
+      "insight": "Automatic transmissions retain consistent ₹50k-₹1.5L resale premiums."
+    },
+    {
+      "feature": "seats",
+      "label": "Seating Capacity",
+      "importance": 0.003,
+      "percentage": "0.3%",
+      "insight": "Separates 7-8 seater utility MPVs/SUVs from compact 4-5 seaters."
+    },
+    {
+      "feature": "fuel_type",
+      "label": "Fuel Type (Diesel/Petrol/CNG)",
+      "importance": 0.002,
+      "percentage": "0.2%",
+      "insight": "Diesel vehicles previously commanded higher commercial value in India."
+    },
+    {
+      "feature": "seller_type",
+      "label": "Seller Type",
+      "importance": 0.002,
+      "percentage": "0.2%",
+      "insight": "Dealer and Trustmark channels price slightly higher than individual private sales."
+    }
+  ]
+}
